@@ -1,0 +1,63 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run zed: open default settings from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "features": { "edit_prediction_provider": "zed" },
+  "buffer_font_features": { "calt": false },
+  "base_keymap": "VSCode",
+  "autosave": "on_focus_change",
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Catppuccin Mocha - No Italics"
+  },
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true
+  },
+  "languages": {
+    "Python": {
+      "language_servers": ["pylsp", "ruff"],
+      "formatter": [
+        {
+          "code_actions": {
+            "source.organizeImports.ruff": true,
+            "source.fixAll.ruff": true
+          }
+        },
+        { "language_server": { "name": "ruff" } }
+      ]
+    },
+    "TOML": { "language_servers": ["Taplo"] }
+  },
+  "lsp": {
+    "pylsp": {
+      "settings": {
+        "plugins": {
+          "pylsp_mypy": { "enabled": false },
+          "pycodestyle": { "enabled": false },
+          "pyflakes": { "enabled": false },
+          "pylint": { "enabled": false },
+          "mccabe": { "enabled": false }
+        }
+      }
+    }
+  },
+  "file_types": {
+    "Dockerfile": ["Dockerfile*[!dockerignore]"],
+    "Git Ignore": ["dockerignore"]
+  },
+  "hard_tabs": false,
+  "formatter": "auto",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true
+}
