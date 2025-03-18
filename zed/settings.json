@@ -18,6 +18,11 @@
     "light": "One Light",
     "dark": "Catppuccin Mocha - No Italics"
   },
+  "terminal": {
+    "cursor_shape": "bar",
+    "blinking": "on",
+    "option_as_meta": true
+  },
   "inlay_hints": {
     "enabled": true,
     "show_type_hints": true,

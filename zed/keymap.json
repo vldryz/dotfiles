@@ -17,5 +17,11 @@
     "bindings": {
       // "j k": ["workspace::SendKeystrokes", "escape"]
     }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "alt-tab": ["terminal::SendText", "\u001b\u0009"]
+    }
   }
 ]
