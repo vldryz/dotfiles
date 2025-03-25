@@ -52,7 +52,8 @@
           "pycodestyle": { "enabled": false },
           "pyflakes": { "enabled": false },
           "pylint": { "enabled": false },
-          "mccabe": { "enabled": false }
+          "mccabe": { "enabled": false },
+          "flake8": { "enabled": false }
         }
       }
     }
@@ -62,7 +63,6 @@
     "Git Ignore": ["dockerignore"]
   },
   "hard_tabs": false,
-  "formatter": "auto",
   "remove_trailing_whitespace_on_save": true,
   "ensure_final_newline_on_save": true
 }
