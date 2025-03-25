@@ -64,5 +64,12 @@
   },
   "hard_tabs": false,
   "remove_trailing_whitespace_on_save": true,
-  "ensure_final_newline_on_save": true
+  "ensure_final_newline_on_save": true,
+  "auto_install_extensions": {
+    "ruff": true,
+    "catppuccin": true,
+    "toml": true,
+    "make": true,
+    "git-firefly": true
+  }
 }
