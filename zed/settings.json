@@ -11,8 +11,8 @@
   "agent": {
     "default_profile": "write",
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4"
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4-latest"
     },
     "version": "2"
   },
@@ -24,7 +24,7 @@
     },
     "enabled_in_text_threads": false
   },
-  "features": { "edit_prediction_provider": "copilot" },
+  "features": { "edit_prediction_provider": "zed" },
   "buffer_font_features": { "calt": false },
   "base_keymap": "VSCode",
   "autosave": "on_focus_change",
