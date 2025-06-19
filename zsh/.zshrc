@@ -109,63 +109,8 @@ bindkey '^[^I' autosuggest-accept
 # +-----------------+
 # | FUNCTIONS       |
 # +-----------------+
-# Function to check for Python virtual environment
-venv_info() {
-  if [[ -n "$VIRTUAL_ENV" ]]; then
-    local venv_name="$(basename "$VIRTUAL_ENV")"
-    echo "%{$blue%}${venv_name}%{$reset%}"
-  fi
-}
-
-# Function to show git info
-git_info() {
-  if [[ -n "$vcs_info_msg_0_" ]]; then
-    echo "%{$green%}git:(${vcs_info_msg_0_})%{$reset%}"
-  fi
-}
-
-# Function to show current directory
-current_dir() {
-  local dir_path="$(pwd | sed "s|^$HOME|~|")"
-  if [[ "$dir_path" == "~" ]]; then
-    echo "%{$orange%}~%{$reset%}"
-  else
-    echo "%{$orange%}${dir_path}%{$reset%}"
-  fi
-}
-
-# Function to show Kubernetes context if kubectl is installed
-kube_context() {
-  if command -v kubectl &> /dev/null; then
-    local context=$(kubectl config current-context 2>/dev/null)
-    if [[ -n "$context" ]]; then
-      echo "%{$blue%}⎈ kube-context(${context})%{$reset%}"
-    fi
-  fi
-}
-
-# +-----------------+
-# | PROMPT          |
-# +-----------------+
-# Enable version control system info
-autoload -Uz vcs_info
-
-# Format the vcs_info_msg_0_ variable
-zstyle ':vcs_info:git:*' formats '%b'
-
-# Colors for prompt
-orange='%F{208}'
-green='%F{114}'
-blue='%F{39}'
-red='%F{203}'
-reset='%f'
-
-# Set the prompt
-precmd() {
-  vcs_info
-  PROMPT="$(venv_info) $(current_dir) $(git_info) $(kube_context)
-%B%b "
-}
+# Custom functions can go here if needed
+# Note: Prompt functions removed since Starship handles the prompt
 
 # +-----------------+
 # | ALIASES         |
@@ -191,3 +136,5 @@ fi
   source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
   source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+eval "$(starship init zsh)"
