@@ -25,7 +25,7 @@ $cmd_duration\
 $line_break\
 $character"""
 
-add_newline = true
+add_newline = false
 palette = "vesper"
 
 # Username (only show if not default user)
