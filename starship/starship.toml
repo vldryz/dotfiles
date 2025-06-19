@@ -1,0 +1,216 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$python\
+$pixi\
+$nodejs\
+$deno\
+$rust\
+$golang\
+$lua\
+$zig\
+$docker_context\
+$helm\
+$kubernetes\
+$terraform\
+$gcloud\
+$cmd_duration\
+$line_break\
+$character"""
+
+add_newline = true
+palette = "vesper"
+
+# Username (only show if not default user)
+[username]
+style_user = "fg:blue"
+style_root = "fg:red"
+format = "[$user]($style) "
+disabled = false
+show_always = false
+
+# Hostname (only show if SSH)
+[hostname]
+ssh_only = true
+style = "fg:blue"
+format = "on [$hostname]($style) "
+
+# Current directory
+[directory]
+style = "fg:magenta"
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style) "
+truncation_symbol = "…/"
+
+# Git branch
+[git_branch]
+style = "fg:cyan"
+# format = "[git:($branch)]($style)"
+format = "[$symbol$branch(:$remote_branch)]($style) "
+
+# Git status
+[git_status]
+style = "fg:red"
+format = "([$all_status$ahead_behind]($style)) "
+conflicted = "⚡"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "📦"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# Python (with uv support)
+[python]
+python_binary = [".venv/bin/python", "python"]
+style = "fg:cyan"
+format = "[${symbol}(${version}) (\\($virtualenv\\))]($style) "
+symbol = " "
+detect_extensions = ["py", "ipynb"]
+detect_files = ["uv.lock", "requirements.txt", "pyproject.toml", ".python-version", "Pipfile", "tox.ini", "setup.py", "__init__.py"]
+detect_folders = [".venv"]
+
+# Node.js (for TypeScript)
+[nodejs]
+style = "fg:green"
+format = "[${symbol}(${version})]($style) "
+symbol = "⬢ "
+detect_extensions = ["js", "mjs", "cjs", "ts", "tsx"]
+detect_files = ["package.json", ".nvmrc"]
+detect_folders = ["node_modules"]
+
+# Rust
+[rust]
+style = "fg:red"
+format = "[${symbol}(${version})]($style) "
+symbol = "🦀 "
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
+
+# Go
+[golang]
+style = "fg:cyan"
+format = "[${symbol}(${version})]($style) "
+symbol = "🐹 "
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum", "glide.yaml", "Gopkg.yml", "Gopkg.lock", ".go-version"]
+detect_folders = ["Godeps"]
+
+# Lua
+[lua]
+style = "fg:blue"
+format = "[${symbol}(${version})]($style) "
+symbol = "🌙 "
+detect_extensions = ["lua"]
+detect_files = [".lua-version"]
+detect_folders = ["lua"]
+
+# Docker context
+[docker_context]
+style = "fg:blue"
+format = "[🐳 $context]($style) "
+only_with_files = true
+detect_extensions = []
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+detect_folders = []
+
+# Kubernetes context
+[kubernetes]
+symbol = "⎈ "
+style = "fg:blue"
+format = "[$symbol$context( \\($namespace\\))]($style) "
+disabled = false
+# Only show when kubectl config files exist or KUBECONFIG is set
+detect_files = []
+detect_folders = []
+detect_extensions = []
+detect_env_vars = ["KUBECONFIG"]
+
+# Context-specific styling and aliases
+[[kubernetes.contexts]]
+context_pattern = ".*dev.*"
+context_alias = "dev"
+style = "fg:green"
+
+[[kubernetes.contexts]]
+context_pattern = ".*staging.*"
+context_alias = "staging"
+style = "fg:yellow"
+
+[[kubernetes.contexts]]
+context_pattern = ".*prod.*"
+context_alias = "prod"
+style = "fg:red"
+
+# Command duration
+[cmd_duration]
+style = "fg:yellow"
+format = "[took $duration]($style) "
+min_time = 2000
+show_milliseconds = false
+
+# The prompt character
+[character]
+success_symbol = "[❯](fg:green)"
+error_symbol = "[❯](fg:red)"
+vimcmd_symbol = "[❮](fg:cyan)"
+
+# Pixi (Python package manager)
+[pixi]
+style = "fg:purple"
+
+# Deno
+[deno]
+style = "fg:teal"
+
+# Zig
+[zig]
+style = "fg:orange"
+
+# Helm
+[helm]
+style = "fg:peach"
+
+# Terraform
+[terraform]
+style = "fg:coral"
+
+# Google Cloud
+[gcloud]
+style = "fg:yellow"
+
+[line_break]
+disabled = false
+
+[fill]
+symbol = ' '
+
+[palettes.vesper]
+accent = "#FFC799"      # Vesper yellow/accent
+background = "#101010"  # Vesper background
+foreground = "#FFFFFF"  # Vesper foreground
+red = "#FF8080"         # Vesper red
+green = "#99FFE4"       # Vesper green/cyan
+yellow = "#FFC799"      # Vesper yellow
+blue = "#A0A0A0"        # Vesper blue
+magenta = "#FF7300"     # Vesper magenta
+cyan = "#99FFE4"        # Vesper cyan
+white = "#FFFFFF"       # Vesper white
+gray = "#505050"        # Vesper bright black
+
+orange = "#FFAB70"      # Warmer orange variant
+purple = "#C299FF"      # Soft purple (complementary to green)
+teal = "#70D4CC"        # Teal variant of cyan
+peach = "#FFD199"       # Softer yellow variant
+coral = "#FF9999"       # Softer red variant
