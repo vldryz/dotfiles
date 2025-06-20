@@ -17,6 +17,9 @@ ln -s ~/dotfiles/ghostty/config ~/.config/ghostty/config
 # karabiner
 ln -s ~/dotfiles/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
 
+# starship
+ln -s ~/dotfiles/starship/starship.toml ~/.config/starship/starship.toml
+
 # Remove login message
 touch ~/.hushlogin
 
