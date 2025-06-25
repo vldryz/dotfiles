@@ -74,7 +74,7 @@ deleted = "✘${count}"
 # Python (with uv support)
 [python]
 python_binary = [".venv/bin/python", "python"]
-style = "fg:cyan"
+style = "fg:orange"
 format = "[${symbol}(${version}) (\\($virtualenv\\))]($style) "
 symbol = " "
 detect_extensions = ["py", "ipynb"]
@@ -100,7 +100,7 @@ detect_files = ["Cargo.toml"]
 
 # Go
 [golang]
-style = "fg:cyan"
+style = "fg:teal"
 format = "[${symbol}(${version})]($style) "
 symbol = "🐹 "
 detect_extensions = ["go"]
@@ -118,7 +118,7 @@ detect_folders = ["lua"]
 
 # Docker context
 [docker_context]
-style = "fg:blue"
+style = "fg:cyan"
 format = "[🐳 $context]($style) "
 only_with_files = true
 detect_extensions = []
@@ -189,7 +189,7 @@ style = "fg:coral"
 # Google Cloud
 [gcloud]
 format = '[$symbol(\($region\))$active]($style) '
-style = "fg:yellow"
+style = "fg:green"
 symbol = "󱇶 "
 
 [line_break]
@@ -203,11 +203,11 @@ accent = "#FFC799"      # Vesper yellow/accent
 background = "#101010"  # Vesper background
 foreground = "#FFFFFF"  # Vesper foreground
 red = "#FF8080"         # Vesper red
-green = "#99FFE4"       # Vesper green/cyan
+green = "#A8E6CF"       # Vesper green (distinct from cyan)
 yellow = "#FFC799"      # Vesper yellow
-blue = "#A0A0A0"        # Vesper blue
+blue = "#87CEEB"        # Vesper blue (proper blue)
 magenta = "#FF7300"     # Vesper magenta
-cyan = "#99FFE4"        # Vesper cyan
+cyan = "#7DD3FC"        # Vesper cyan (distinct from green)
 white = "#FFFFFF"       # Vesper white
 gray = "#505050"        # Vesper bright black
 
