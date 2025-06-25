@@ -75,7 +75,7 @@ deleted = "✘${count}"
 [python]
 python_binary = [".venv/bin/python", "python"]
 style = "fg:orange"
-format = "[${symbol}(${version}) (\\($virtualenv\\))]($style) "
+format = "[${symbol}(${version})(\\($virtualenv\\))]($style) "
 symbol = " "
 detect_extensions = ["py", "ipynb"]
 detect_files = ["uv.lock", "requirements.txt", "pyproject.toml", ".python-version", "Pipfile", "tox.ini", "setup.py", "__init__.py"]
@@ -196,7 +196,7 @@ symbol = "󱇶 "
 disabled = false
 
 [fill]
-symbol = ' '
+symbol = " "
 
 [palettes.vesper]
 accent = "#FFC799"      # Vesper yellow/accent
