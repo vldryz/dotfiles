@@ -188,7 +188,9 @@ style = "fg:coral"
 
 # Google Cloud
 [gcloud]
+format = '[$symbol(\($region\))$active]($style) '
 style = "fg:yellow"
+symbol = "󱇶 "
 
 [line_break]
 disabled = false
