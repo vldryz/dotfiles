@@ -28,7 +28,6 @@ $character"""
 add_newline = false
 palette = "vesper"
 
-# Username (only show if not default user)
 [username]
 style_user = "fg:blue"
 style_root = "fg:red"
@@ -36,13 +35,11 @@ format = "[$user]($style) "
 disabled = false
 show_always = false
 
-# Hostname (only show if SSH)
 [hostname]
 ssh_only = true
 style = "fg:blue"
 format = "on [$hostname]($style) "
 
-# Current directory
 [directory]
 style = "fg:magenta"
 truncation_length = 3
@@ -50,13 +47,11 @@ truncate_to_repo = true
 format = "[$path]($style) "
 truncation_symbol = "…/"
 
-# Git branch
 [git_branch]
 style = "fg:cyan"
 # format = "[git:($branch)]($style)"
 format = "[$symbol$branch(:$remote_branch)]($style) "
 
-# Git status
 [git_status]
 style = "fg:red"
 format = "([$all_status$ahead_behind]($style)) "
@@ -71,7 +66,6 @@ staged = "+${count}"
 renamed = "»${count}"
 deleted = "✘${count}"
 
-# Python (with uv support)
 [python]
 python_binary = [".venv/bin/python", "python"]
 style = "fg:orange"
@@ -81,7 +75,6 @@ detect_extensions = ["py", "ipynb"]
 detect_files = ["uv.lock", "requirements.txt", "pyproject.toml", ".python-version", "Pipfile", "tox.ini", "setup.py", "__init__.py"]
 detect_folders = [".venv"]
 
-# Node.js (for TypeScript)
 [nodejs]
 style = "fg:green"
 format = "[${symbol}(${version})]($style) "
@@ -90,7 +83,6 @@ detect_extensions = ["js", "mjs", "cjs", "ts", "tsx"]
 detect_files = ["package.json", ".nvmrc"]
 detect_folders = ["node_modules"]
 
-# Rust
 [rust]
 style = "fg:red"
 format = "[${symbol}(${version})]($style) "
@@ -98,7 +90,6 @@ symbol = "🦀 "
 detect_extensions = ["rs"]
 detect_files = ["Cargo.toml"]
 
-# Go
 [golang]
 style = "fg:teal"
 format = "[${symbol}(${version})]($style) "
@@ -107,7 +98,6 @@ detect_extensions = ["go"]
 detect_files = ["go.mod", "go.sum", "glide.yaml", "Gopkg.yml", "Gopkg.lock", ".go-version"]
 detect_folders = ["Godeps"]
 
-# Lua
 [lua]
 style = "fg:blue"
 format = "[${symbol}(${version})]($style) "
@@ -116,7 +106,6 @@ detect_extensions = ["lua"]
 detect_files = [".lua-version"]
 detect_folders = ["lua"]
 
-# Docker context
 [docker_context]
 style = "fg:cyan"
 format = "[🐳 $context]($style) "
@@ -153,40 +142,34 @@ context_pattern = ".*prod.*"
 context_alias = "prod"
 style = "fg:red"
 
-# Command duration
 [cmd_duration]
 style = "fg:yellow"
 format = "[took $duration]($style) "
 min_time = 2000
 show_milliseconds = false
 
-# The prompt character
 [character]
 success_symbol = "[❯](fg:green)"
 error_symbol = "[❯](fg:red)"
 vimcmd_symbol = "[❮](fg:cyan)"
 
-# Pixi (Python package manager)
 [pixi]
+format = '[$symbol(\($environment\))]($style) '
 style = "fg:purple"
+symbol = '🧚'
 
-# Deno
 [deno]
 style = "fg:teal"
 
-# Zig
 [zig]
 style = "fg:orange"
 
-# Helm
 [helm]
 style = "fg:peach"
 
-# Terraform
 [terraform]
 style = "fg:coral"
 
-# Google Cloud
 [gcloud]
 format = '[$symbol(\($region\))$active]($style) '
 style = "fg:green"
