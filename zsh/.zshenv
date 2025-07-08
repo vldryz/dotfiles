@@ -15,4 +15,4 @@ export LS_COLORS='di=01;34:ln=01;36:so=01;35:pi=40;33:ex=01;32:bd=40;33;01:cd=40
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 # uv
-export PATH="/Users/vladislav.ryzhikh/.local/bin:$PATH"
+export PATH="/Users/vladislavryzhikh/.local/bin:$PATH"
