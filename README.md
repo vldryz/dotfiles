@@ -20,6 +20,9 @@ ln -s ~/dotfiles/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
 # starship
 ln -s ~/dotfiles/starship/starship.toml ~/.config/starship/starship.toml
 
+# pixi
+ln -s ~/dotfiles/pixi/config.toml ~/.config/pixi/config.toml
+
 # Remove login message
 touch ~/.hushlogin
 
