@@ -7,6 +7,7 @@ alias la="ls -A"
 alias cd="z"
 alias svenv="source .venv/bin/activate"
 alias brup="brew update && brew upgrade"
+alias upall="$HOME/dotfiles/scripts/upgrade-all.sh"
 
 # +-----------------+
 # | GIT             |
