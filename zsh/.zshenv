@@ -16,3 +16,6 @@ export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 # uv
 export PATH="$HOME/.local/bin:$PATH"
+
+# rust
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
