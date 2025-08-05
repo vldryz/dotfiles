@@ -80,7 +80,7 @@ style = "fg:green"
 format = "[${symbol}(${version})]($style) "
 symbol = "⬢ "
 detect_extensions = ["js", "mjs", "cjs", "ts", "tsx"]
-detect_files = ["package.json", ".nvmrc"]
+detect_files = ["package.json", ".nvmrc", ".node-version"]
 detect_folders = ["node_modules"]
 
 [rust]
