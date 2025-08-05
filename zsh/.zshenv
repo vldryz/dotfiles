@@ -19,3 +19,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # rust
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+
+# bun
+export PATH="$HOME/.bun/bin:$PATH"
