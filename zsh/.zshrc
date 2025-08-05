@@ -123,6 +123,11 @@ source $ZDOTDIR/aliases.zsh
 # Initialize zoxide
 eval "$(zoxide init zsh)"
 
+# Initialize fnm (Fast Node Manager)
+if command -v fnm &> /dev/null; then
+    eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
+fi
+
 # Kubectl completion
 if command -v kubectl &> /dev/null; then
   source <(kubectl completion zsh)
