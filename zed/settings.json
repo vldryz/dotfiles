@@ -7,24 +7,26 @@
 // custom settings, run zed: open default settings from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "icon_theme": "Zed (Default)",
+  "calls": {
+    "mute_on_join": true
+  },
+  "icon_theme": "Catppuccin Mocha",
   "agent": {
     "default_profile": "write",
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-sonnet-4"
-    },
-    "version": "2"
+      "provider": "copilot_chat",
+      "model": "gpt-5"
+    }
   },
   "edit_predictions": {
-    "mode": "eager",
+    "mode": "subtle",
     "copilot": {
       "proxy": null,
       "proxy_no_verify": null
     },
     "enabled_in_text_threads": false
   },
-  "features": { "edit_prediction_provider": "zed" },
+  "features": { "edit_prediction_provider":  "zed" },
   "buffer_font_family": "JetBrainsMono Nerd Font Mono",
   "buffer_font_features": { "calt": false },
   "base_keymap": "VSCode",
@@ -51,15 +53,7 @@
   "languages": {
     "Python": {
       "language_servers": ["pylsp", "ruff"],
-      "formatter": [
-        {
-          "code_actions": {
-            "source.organizeImports.ruff": true,
-            "source.fixAll.ruff": true
-          }
-        },
-        { "language_server": { "name": "ruff" } }
-      ]
+      "formatter": [{ "language_server": { "name": "ruff" } }]
     },
     "TOML": { "language_servers": ["Taplo"] },
     "YAML": { "language_servers": ["yamlls"] }
@@ -86,7 +80,6 @@
   "remove_trailing_whitespace_on_save": true,
   "ensure_final_newline_on_save": true,
   "auto_install_extensions": {
-    "ruff": true,
     "catppuccin": true,
     "toml": true,
     "make": true,
