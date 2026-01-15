@@ -26,7 +26,7 @@
     },
     "enabled_in_text_threads": false
   },
-  "features": { "edit_prediction_provider":  "zed" },
+  "features": { "edit_prediction_provider":  "copilot" },
   "buffer_font_family": "JetBrainsMono Nerd Font Mono",
   "buffer_font_features": { "calt": false },
   "base_keymap": "VSCode",
@@ -47,31 +47,23 @@
   "inlay_hints": {
     "enabled": true,
     "show_type_hints": true,
-    "show_parameter_hints": true,
+    "show_parameter_hints": false,
     "show_other_hints": true
   },
   "languages": {
     "Python": {
-      "language_servers": ["pylsp", "ruff"],
+      "language_servers": [
+        "ty",
+        "!basedpyright",
+        "ruff",
+        "..."
+      ],
       "formatter": [{ "language_server": { "name": "ruff" } }]
     },
     "TOML": { "language_servers": ["Taplo"] },
     "YAML": { "language_servers": ["yamlls"] }
   },
-  "lsp": {
-    "pylsp": {
-      "settings": {
-        "plugins": {
-          "pylsp_mypy": { "enabled": false },
-          "pycodestyle": { "enabled": false },
-          "pyflakes": { "enabled": false },
-          "pylint": { "enabled": false },
-          "mccabe": { "enabled": false },
-          "flake8": { "enabled": false }
-        }
-      }
-    }
-  },
+  "lsp": {},
   "file_types": {
     "Dockerfile": ["Dockerfile*[!dockerignore]"],
     "Git Ignore": ["dockerignore"]
