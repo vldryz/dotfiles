@@ -7,26 +7,39 @@
 // custom settings, run zed: open default settings from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "project_panel": {
+    "dock": "left",
+  },
+  "outline_panel": {
+    "dock": "right",
+  },
+  "collaboration_panel": {
+    "dock": "right",
+  },
+  "git_panel": {
+    "dock": "right",
+  },
   "calls": {
-    "mute_on_join": true
+    "mute_on_join": true,
   },
   "icon_theme": "Catppuccin Mocha",
   "agent": {
+    "dock": "left",
     "default_profile": "write",
     "default_model": {
+      "enable_thinking": true,
       "provider": "copilot_chat",
-      "model": "gpt-5"
-    }
+      "model": "claude-opus-4.5",
+    },
   },
   "edit_predictions": {
+    "provider": "copilot",
     "mode": "subtle",
     "copilot": {
       "proxy": null,
-      "proxy_no_verify": null
+      "proxy_no_verify": null,
     },
-    "enabled_in_text_threads": false
   },
-  "features": { "edit_prediction_provider":  "copilot" },
   "buffer_font_family": "JetBrainsMono Nerd Font Mono",
   "buffer_font_features": { "calt": false },
   "base_keymap": "VSCode",
@@ -37,36 +50,30 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "Catppuccin Mocha - No Italics"
+    "dark": "Catppuccin Mocha - No Italics",
   },
   "terminal": {
     "cursor_shape": "bar",
     "blinking": "on",
-    "option_as_meta": true
+    "option_as_meta": true,
   },
   "inlay_hints": {
     "enabled": true,
     "show_type_hints": true,
     "show_parameter_hints": false,
-    "show_other_hints": true
+    "show_other_hints": true,
   },
   "languages": {
     "Python": {
-      "language_servers": [
-        "ty",
-        "!basedpyright",
-        "ruff",
-        "..."
-      ],
-      "formatter": [{ "language_server": { "name": "ruff" } }]
+      "language_servers": ["ty", "ruff"],
+      "formatter": [{ "language_server": { "name": "ruff" } }],
     },
     "TOML": { "language_servers": ["Taplo"] },
-    "YAML": { "language_servers": ["yamlls"] }
   },
   "lsp": {},
   "file_types": {
     "Dockerfile": ["Dockerfile*[!dockerignore]"],
-    "Git Ignore": ["dockerignore"]
+    "Git Ignore": ["dockerignore"],
   },
   "hard_tabs": false,
   "remove_trailing_whitespace_on_save": true,
@@ -75,6 +82,6 @@
     "catppuccin": true,
     "toml": true,
     "make": true,
-    "git-firefly": true
-  }
+    "git-firefly": true,
+  },
 }
