@@ -4,13 +4,11 @@
 # Add all custom fpaths
 fpath=($HOME/.docker/completions $fpath)
 
-# zsh-completions from brew
-if type brew &>/dev/null; then
+# Homebrew (macOS): shellenv + zsh-completions fpath
+if command -v brew &>/dev/null; then
+  eval "$(brew shellenv)"
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
 fi
-
-# Homebrew (early because it might affect PATH)
-eval "$(brew shellenv)"
 
 # +-----------------+
 # | COLORS          |
@@ -91,7 +89,11 @@ zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f
 # +-----------------+
 # | KEY BINDINGS    |
 # +-----------------+
-# Expand aliases with space
+# Safe alias expansion on space: bracketed-paste-magic prevents this from
+# firing during paste, so pasted text is never mangled by alias expansion
+autoload -Uz bracketed-paste-magic
+zle -N bracketed-paste bracketed-paste-magic
+
 function expand-alias() {
 	zle _expand_alias
 	zle self-insert
@@ -99,11 +101,25 @@ function expand-alias() {
 zle -N expand-alias
 bindkey -M main ' ' expand-alias
 
-# History search
-bindkey "^[[A" history-beginning-search-backward
-bindkey "^[[B" history-beginning-search-forward
+# Up/Down: context-aware — navigates within a multi-line command when inside
+# one, falls back to history search at the top/bottom line.
+# Binds both CSI (^[[A/B, Ghostty) and SS3 (^[OA/B, Terminal.app) variants.
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+bindkey "^[OA" up-line-or-beginning-search
+bindkey "^[OB" down-line-or-beginning-search
 
-# zsh-autosuggestions
+# Option+Arrow: word jump (requires macos-option-as-alt = true in Ghostty)
+bindkey "^[f" forward-word
+bindkey "^[b" backward-word
+
+# Option+Backspace: delete word (requires macos-option-as-alt = true in Ghostty)
+bindkey "^[^?" backward-kill-word
+
+# zsh-autosuggestions: accept suggestion
 bindkey '^[^I' autosuggest-accept
 
 # +-----------------+
@@ -137,9 +153,17 @@ fi
 # | PLUGINS         |
 # +-----------------+
 # Must be at the end of the file
-[ -f $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
-  source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-[ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
-  source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Try brew paths (macOS) then apt paths (Linux)
+for _p in \
+  "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+  [ -f "$_p" ] && { source "$_p"; break; }
+done
+for _p in \
+  "${HOMEBREW_PREFIX:-}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh; do
+  [ -f "$_p" ] && { source "$_p"; break; }
+done
+unset _p
 
 eval "$(starship init zsh)"

@@ -14,6 +14,8 @@ font-size = 15
 
 # Other
 window-save-state = always
+macos-option-as-alt = true
+shell-integration-features = ssh-env,ssh-terminfo
 
 # Config syntax crash course
 # ==========================
