@@ -4,11 +4,13 @@
 # Add all custom fpaths
 fpath=($HOME/.docker/completions $fpath)
 
-# Homebrew (macOS): shellenv + zsh-completions fpath
-if command -v brew &>/dev/null; then
-  eval "$(brew shellenv)"
+# zsh-completions from brew
+if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
 fi
+
+# Homebrew (early because it might affect PATH)
+eval "$(brew shellenv)"
 
 # +-----------------+
 # | COLORS          |
@@ -153,17 +155,9 @@ fi
 # | PLUGINS         |
 # +-----------------+
 # Must be at the end of the file
-# Try brew paths (macOS) then apt paths (Linux)
-for _p in \
-  "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
-  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
-  [ -f "$_p" ] && { source "$_p"; break; }
-done
-for _p in \
-  "${HOMEBREW_PREFIX:-}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
-  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh; do
-  [ -f "$_p" ] && { source "$_p"; break; }
-done
-unset _p
+[ -f $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
+  source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
+  source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 eval "$(starship init zsh)"
