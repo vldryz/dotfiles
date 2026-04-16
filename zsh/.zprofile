@@ -1,5 +1,10 @@
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew (macOS)
+if [[ "$OSTYPE" == darwin* ]] && [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
-# Added by Toolbox App
-export PATH="$PATH:$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+# JetBrains Toolbox (macOS)
+if [[ -d "$HOME/Library/Application Support/JetBrains/Toolbox/scripts" ]]; then
+  export PATH="$PATH:$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+fi
