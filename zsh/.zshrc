@@ -1,16 +1,26 @@
 # +-----------------+
+# | PLATFORM DETECT |
+# +-----------------+
+if [[ "$OSTYPE" == darwin* ]]; then
+  IS_MACOS=true
+  # Homebrew (early because it affects PATH and plugin paths)
+  eval "$(brew shellenv)"
+  ZSH_PLUGIN_DIR="$HOMEBREW_PREFIX/share"
+elif [[ -f /etc/debian_version ]]; then
+  IS_DEBIAN=true
+  ZSH_PLUGIN_DIR="/usr/share"
+fi
+
+# +-----------------+
 # | PATH & FPATH    |
 # +-----------------+
 # Add all custom fpaths
-fpath=($HOME/.docker/completions $fpath)
+[[ -d $HOME/.docker/completions ]] && fpath=($HOME/.docker/completions $fpath)
 
-# zsh-completions from brew
-if type brew &>/dev/null; then
+# zsh-completions from brew (macOS only)
+if [[ -n $IS_MACOS ]] && type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
 fi
-
-# Homebrew (early because it might affect PATH)
-eval "$(brew shellenv)"
 
 # +-----------------+
 # | COLORS          |
@@ -91,10 +101,13 @@ zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f
 # +-----------------+
 # | KEY BINDINGS    |
 # +-----------------+
-# Safe alias expansion on space: bracketed-paste-magic prevents this from
-# firing during paste, so pasted text is never mangled by alias expansion
-autoload -Uz bracketed-paste-magic
-zle -N bracketed-paste bracketed-paste-magic
+# Safe alias expansion on space
+# bracketed-paste-magic handles paste correctly on macOS (newer zsh),
+# but is painfully slow on zsh 5.8.x (Ubuntu 22.04) — skip it there
+if [[ -n $IS_MACOS ]]; then
+  autoload -Uz bracketed-paste-magic
+  zle -N bracketed-paste bracketed-paste-magic
+fi
 
 function expand-alias() {
 	zle _expand_alias
@@ -151,9 +164,9 @@ fi
 # | PLUGINS         |
 # +-----------------+
 # Must be at the end of the file
-[ -f $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
-  source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-[ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
-  source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -f $ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
+  source $ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -f $ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
+  source $ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 eval "$(starship init zsh)"
