@@ -103,16 +103,12 @@ function expand-alias() {
 zle -N expand-alias
 bindkey -M main ' ' expand-alias
 
-# Up/Down: context-aware — navigates within a multi-line command when inside
-# one, falls back to history search at the top/bottom line.
-# Binds both CSI (^[[A/B, Ghostty) and SS3 (^[OA/B, Terminal.app) variants.
-autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search
-bindkey "^[[B" down-line-or-beginning-search
-bindkey "^[OA" up-line-or-beginning-search
-bindkey "^[OB" down-line-or-beginning-search
+# Option+Enter: insert newline without submitting (enables multi-line editing)
+function insert-newline() {
+    LBUFFER+=$'\n'
+}
+zle -N insert-newline
+bindkey '^[^M' insert-newline
 
 # Option+Arrow: word jump (requires macos-option-as-alt = true in Ghostty)
 bindkey "^[f" forward-word
