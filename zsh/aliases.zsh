@@ -2,6 +2,9 @@
 # | GENERAL         |
 # +-----------------+
 
+# GNU ls (Linux) needs --color=auto; BSD ls (macOS) uses CLICOLOR from .zshenv
+[[ -n $IS_DEBIAN ]] && alias ls='ls --color=auto'
+
 alias ll="ls -lahF"
 alias la="ls -A"
 alias cd="z"
