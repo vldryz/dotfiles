@@ -14,6 +14,9 @@ export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
 export LS_COLORS='di=01;34:ln=01;36:so=01;35:pi=40;33:ex=01;32:bd=40;33;01:cd=40;33;01:fi=00;37'
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
+# homebrew
+export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1 # don't auto-upgrade casks on `brew install`/`upgrade`
+
 # uv
 export PATH="$HOME/.local/bin:$PATH"
 
