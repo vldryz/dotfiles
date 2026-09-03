@@ -23,6 +23,9 @@ ln -s ~/dotfiles/starship/starship.toml ~/.config/starship/starship.toml
 # pixi
 ln -s ~/dotfiles/pixi/config.toml ~/.config/pixi/config.toml
 
+# claude skills
+ln -s ~/dotfiles/claude/skills/unslop ~/.claude/skills/unslop
+
 # Remove login message
 touch ~/.hushlogin
 
