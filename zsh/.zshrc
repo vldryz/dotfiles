@@ -3,8 +3,11 @@
 # +-----------------+
 if [[ "$OSTYPE" == darwin* ]]; then
   IS_MACOS=true
-  # Homebrew (early because it affects PATH and plugin paths)
-  eval "$(brew shellenv)"
+  # Homebrew (early because it affects PATH and plugin paths).
+  # Login shells already got this from .zprofile; only non-login shells need it.
+  if [[ -z $HOMEBREW_PREFIX && -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
   ZSH_PLUGIN_DIR="$HOMEBREW_PREFIX/share"
 elif [[ -f /etc/debian_version ]]; then
   IS_DEBIAN=true
@@ -14,12 +17,15 @@ fi
 # +-----------------+
 # | PATH & FPATH    |
 # +-----------------+
+# Keep PATH/FPATH free of duplicates (path_helper + brew shellenv overlap)
+typeset -U path fpath
+
 # Add all custom fpaths
 [[ -d $HOME/.docker/completions ]] && fpath=($HOME/.docker/completions $fpath)
 
 # zsh-completions from brew (macOS only)
-if [[ -n $IS_MACOS ]] && type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+if [[ -n $IS_MACOS && -d $HOMEBREW_PREFIX/share/zsh-completions ]]; then
+  FPATH=$HOMEBREW_PREFIX/share/zsh-completions:$FPATH
 fi
 
 # +-----------------+
@@ -38,6 +44,13 @@ compinit
 # +-----------------+
 # | SHELL OPTIONS   |
 # +-----------------+
+# History file and size. Set here, not in .zshenv: macOS /etc/zshrc runs in
+# between and resets them to 2000/1000. Not exported, so a child bash doesn't
+# adopt HISTFILE and overwrite the zsh history on exit.
+HISTFILE="$ZDOTDIR/.zsh_history"
+HISTSIZE=10000                   # Maximum events for internal history
+SAVEHIST=10000                   # Maximum events in history file
+
 # History options
 setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format.
 setopt SHARE_HISTORY             # Share history between all sessions.
@@ -50,8 +63,12 @@ setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history
 setopt HIST_VERIFY               # Do not execute immediately upon history expansion.
 
 # Navigation options
-setopt CORRECT              # Spelling correction
 setopt EXTENDED_GLOB        # Use extended globbing syntax
+
+# Input options
+setopt INTERACTIVE_COMMENTS # `# ...` is a comment at the prompt too (pasted snippets work)
+# CORRECT is intentionally off: on pasted text it offered e.g. `edit` -> `exit`.
+# Typo tolerance stays in completion via the _approximate completer below.
 
 # Completion options
 setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
@@ -66,7 +83,7 @@ zstyle ':completion:*' completer _extensions _complete _approximate
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/.zcompcache"
 
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
@@ -82,7 +99,7 @@ zstyle ':completion:*' file-sort modification
 # Formatting and colors
 zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
 zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
-zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:*:*:*:messages' format ' %F{magenta} -- %d --%f'
 zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
@@ -147,17 +164,24 @@ source $ZDOTDIR/aliases.zsh
 # +-----------------+
 # | EXTERNAL TOOLS  |
 # +-----------------+
-# Initialize zoxide
-eval "$(zoxide init zsh)"
+# Initialize zoxide (aliases.zsh maps cd to z only when zoxide exists)
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
 
 # Initialize fnm (Fast Node Manager)
 if command -v fnm &> /dev/null; then
     eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
 fi
 
-# Kubectl completion
+# Kubectl completion, generated once per kubectl binary instead of every shell
 if command -v kubectl &> /dev/null; then
-  source <(kubectl completion zsh)
+  _kubectl_comp="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh"
+  if [[ ! -s $_kubectl_comp || $commands[kubectl] -nt $_kubectl_comp ]]; then
+    mkdir -p "${_kubectl_comp:h}" && kubectl completion zsh >| "$_kubectl_comp"
+  fi
+  source "$_kubectl_comp"
+  unset _kubectl_comp
 fi
 
 # +-----------------+
@@ -169,4 +193,6 @@ fi
 [ -f $ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source $ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-eval "$(starship init zsh)"
+if command -v starship &> /dev/null; then
+  eval "$(starship init zsh)"
+fi

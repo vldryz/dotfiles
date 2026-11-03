@@ -7,7 +7,7 @@
 
 alias ll="ls -lahF"
 alias la="ls -A"
-alias cd="z"
+(( $+commands[zoxide] )) && alias cd="z"  # without zoxide, keep the builtin cd
 alias svenv="source .venv/bin/activate"
 alias brup="brew update && brew upgrade"
 alias upall="$HOME/dotfiles/scripts/upgrade-all.sh"

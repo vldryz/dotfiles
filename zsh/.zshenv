@@ -5,9 +5,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 
 # zsh
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-export HISTFILE="$ZDOTDIR/.zsh_history" # History filepath
-export HISTSIZE=10000                   # Maximum events for internal history
-export SAVEHIST=10000                   # Maximum events in history file
+# History size/file live in .zshrc: macOS /etc/zshrc overrides them if set here
 export CLICOLOR=1
 export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
 # completion colors
