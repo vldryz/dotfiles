@@ -1,35 +1,43 @@
 # dotfiles
 
-```shell
-# zsh
-ln -s ~/dotfiles/zsh/.zshrc ~/.config/zsh/.zshrc
-ln -s ~/dotfiles/zsh/.zprofile ~/.config/zsh/.zprofile
-ln -s ~/dotfiles/zsh/aliases.zsh ~/.config/zsh/aliases.zsh
-ln -s ~/dotfiles/zsh/.zshenv ~/.zshenv
+My macOS setup: zsh with Starship, Ghostty, Zed, Karabiner-Elements, and a
+Brewfile with everything I install.
 
-# zed
-ln -s ~/dotfiles/zed/keymap.json ~/.config/zed/keymap.json
-ln -s ~/dotfiles/zed/settings.json ~/.config/zed/settings.json
+## New Mac
 
-# ghostty
-ln -s ~/dotfiles/ghostty/config ~/.config/ghostty/config
+1. Install [Homebrew](https://brew.sh). It also installs the Xcode Command Line
+   Tools, which provide `git`:
 
-# karabiner
-ln -s ~/dotfiles/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
+   ```shell
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
 
-# starship
-ln -s ~/dotfiles/starship/starship.toml ~/.config/starship/starship.toml
+2. Clone the repo and run the installer:
 
-# pixi
-ln -s ~/dotfiles/pixi/config.toml ~/.config/pixi/config.toml
+   ```shell
+   git clone https://github.com/vldryz/dotfiles.git ~/dotfiles
+   ~/dotfiles/install.sh --check   # preview; changes nothing
+   ~/dotfiles/install.sh
+   ```
 
-# claude skills
-ln -s ~/dotfiles/claude/skills/unslop ~/.claude/skills/unslop
+3. Open a new terminal tab.
 
-# Remove login message
-touch ~/.hushlogin
+`install.sh` installs whatever from the Brewfile is missing (it never upgrades),
+links the configs into place, and is safe to re-run. A config that already
+exists and differs from the repo is left alone and listed. Re-run with
+`--adopt` to keep yours (it's copied into the repo) or `--overwrite` to use the
+repo's (yours is moved to `~/.dotfiles-backup/`).
 
-# zsh-completions
-chmod go-w /opt/homebrew/share
-chmod -R go-w /opt/homebrew/share/zsh
-```
+After adding an SSH key to GitHub, switch the remote so you can push:
+`git -C ~/dotfiles remote set-url origin git@github.com:vldryz/dotfiles.git`
+
+## Linux servers
+
+Clone to `~/dotfiles`, then run `scripts/install-remote.sh` (Debian/Ubuntu,
+uses apt).
+
+## Keeping it current
+
+- `upall` upgrades Homebrew packages, uv tools and Rust.
+- Regenerate the Brewfile from what's installed:
+  `brew bundle dump --file=- | grep -vE '^(#|npm )' > ~/dotfiles/Brewfile`

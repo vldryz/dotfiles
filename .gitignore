@@ -1,2 +1,6 @@
 # MacOS
 .DS_Store
+
+# Karabiner writes these next to karabiner.json (~/.config/karabiner links here)
+karabiner/assets/
+karabiner/automatic_backups/
