@@ -161,7 +161,8 @@ if ((BREW)); then
       ok "everything in the Brewfile is installed"
     elif ((CHECK)); then
       act "install these from the Brewfile (missing only; nothing gets upgraded):"
-      brew bundle check --no-upgrade --verbose --file="$brewfile" 2>/dev/null |
+      # brew lists missing items on stderr and exits 1 when anything is missing
+      { brew bundle check --no-upgrade --verbose --file="$brewfile" 2>&1 || true; } |
         sed -n 's/^→ /      /p'
     else
       act "install what's missing from the Brewfile (nothing gets upgraded)"
