@@ -9,18 +9,12 @@ $git_branch\
 $git_status\
 $fill\
 $python\
-$pixi\
 $nodejs\
 $deno\
 $rust\
 $golang\
 $lua\
 $zig\
-$docker_context\
-$helm\
-$kubernetes\
-$terraform\
-$gcloud\
 $cmd_duration\
 $line_break\
 $character"""
@@ -49,6 +43,7 @@ truncation_symbol = "…/"
 
 [git_branch]
 style = "fg:cyan"
+symbol = "⎇ "
 # format = "[git:($branch)]($style)"
 format = "[$symbol$branch(:$remote_branch)]($style) "
 
@@ -70,7 +65,6 @@ deleted = "✘${count}"
 python_binary = [".venv/bin/python", "python"]
 style = "fg:orange"
 format = "[${symbol}(${version})(\\($virtualenv\\))]($style) "
-symbol = " "
 detect_extensions = ["py", "ipynb"]
 detect_files = ["uv.lock", "requirements.txt", "pyproject.toml", ".python-version", "Pipfile", "tox.ini", "setup.py", "__init__.py"]
 detect_folders = [".venv"]
@@ -106,42 +100,6 @@ detect_extensions = ["lua"]
 detect_files = [".lua-version"]
 detect_folders = ["lua"]
 
-[docker_context]
-style = "fg:cyan"
-format = "[🐳 $context]($style) "
-only_with_files = true
-detect_extensions = []
-detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
-detect_folders = []
-
-# Kubernetes context
-[kubernetes]
-symbol = "⎈ "
-style = "fg:blue"
-format = "[$symbol$context( \\($namespace\\))]($style) "
-disabled = false
-# Only show when kubectl config files exist or KUBECONFIG is set
-detect_files = []
-detect_folders = []
-detect_extensions = []
-detect_env_vars = ["KUBECONFIG"]
-
-# Context-specific styling and aliases
-[[kubernetes.contexts]]
-context_pattern = ".*dev.*"
-context_alias = "dev"
-style = "fg:green"
-
-[[kubernetes.contexts]]
-context_pattern = ".*staging.*"
-context_alias = "staging"
-style = "fg:yellow"
-
-[[kubernetes.contexts]]
-context_pattern = ".*prod.*"
-context_alias = "prod"
-style = "fg:red"
-
 [cmd_duration]
 style = "fg:yellow"
 format = "[took $duration]($style) "
@@ -153,27 +111,11 @@ success_symbol = "[❯](fg:green)"
 error_symbol = "[❯](fg:red)"
 vimcmd_symbol = "[❮](fg:cyan)"
 
-[pixi]
-format = '[$symbol(\($environment\))]($style) '
-style = "fg:purple"
-symbol = '🧚'
-
 [deno]
 style = "fg:teal"
 
 [zig]
 style = "fg:orange"
-
-[helm]
-style = "fg:peach"
-
-[terraform]
-style = "fg:coral"
-
-[gcloud]
-format = '[$symbol(\($region\))$active]($style) '
-style = "fg:green"
-symbol = "󱇶 "
 
 [line_break]
 disabled = false
