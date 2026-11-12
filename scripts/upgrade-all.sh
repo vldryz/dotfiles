@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Upgrade everything installed with Homebrew and uv, tidy up, then check that
-# the Brewfile still matches what's installed.
+# Upgrade everything installed with Homebrew and uv, tidy up, then rewrite the
+# Brewfile to match what's installed.
 #
 # Apps that update themselves (Zen, Helium, T3 Code, Claude, ...) are skipped,
 # so this never quits them mid-session. The exceptions, like Chrome, are listed
@@ -36,22 +36,20 @@ run brew cleanup
 run uv cache prune
 
 step "📋 Brewfile"
-export HOMEBREW_NO_AUTO_UPDATE=1 # updated above already
-if brew bundle check --no-upgrade --file="$BREWFILE" >/dev/null 2>&1; then
-  echo "  Everything in the Brewfile is installed."
+# Rewrite the Brewfile from what's installed, so it never drifts. npm globals
+# are left out: they belong to fnm's Node, not Homebrew.
+dump=$(HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump --file=- 2>/dev/null | grep -v -E '^(#|npm )') ||
+  dump=""
+if [[ -z $dump ]]; then
+  echo "  Couldn't read what's installed; Brewfile left as it was."
+  FAILED+=("brew bundle dump")
+elif [[ $dump == "$(<"$BREWFILE")" ]]; then
+  echo "  Already matches what's installed."
 else
-  echo "  In the Brewfile but not installed:"
-  # brew lists missing items on stderr and exits 1 when anything is missing
-  { brew bundle check --no-upgrade --verbose --file="$BREWFILE" 2>&1 || true; } |
-    sed -n 's/^→ /    /p'
-fi
-extra=$(brew bundle cleanup --file="$BREWFILE" 2>/dev/null |
-  grep -v -E '^(==>|Run `brew bundle cleanup|[[:space:]]*$)' || true)
-if [[ -n $extra ]]; then
-  echo "  Installed but not in the Brewfile (add them to it, or uninstall them):"
-  printf '%s\n' "$extra" | sed 's/^/    /'
-else
-  echo "  Nothing is installed that isn't in the Brewfile."
+  echo "  Updated to match what's installed (not committed):"
+  { diff <(cat "$BREWFILE") <(printf '%s\n' "$dump") || true; } |
+    sed -n 's/^< /    - /p; s/^> /    + /p'
+  printf '%s\n' "$dump" >"$BREWFILE"
 fi
 
 if ((${#FAILED[@]})); then

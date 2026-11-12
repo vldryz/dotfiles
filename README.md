@@ -39,8 +39,8 @@ uses apt).
 ## Keeping it current
 
 - `upall` upgrades Homebrew packages and uv tools without stopping to ask,
-  cleans up, and reports anything installed that the Brewfile doesn't list (or
-  the reverse). Apps that update themselves are left alone, except those in
-  `HOMEBREW_UPGRADE_GREEDY_CASKS` in `zsh/.zshenv` (Chrome).
-- Regenerate the Brewfile from what's installed:
+  cleans up, and rewrites the Brewfile to match what's installed, listing what
+  changed (commit it yourself). Apps that update themselves are left alone,
+  except those in `HOMEBREW_UPGRADE_GREEDY_CASKS` in `zsh/.zshenv` (Chrome).
+- To rewrite the Brewfile without upgrading anything:
   `brew bundle dump --file=- | grep -vE '^(#|npm )' > ~/dotfiles/Brewfile`
