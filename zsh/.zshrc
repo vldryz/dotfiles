@@ -20,9 +20,6 @@ fi
 # Keep PATH/FPATH free of duplicates (path_helper + brew shellenv overlap)
 typeset -U path fpath
 
-# Add all custom fpaths
-[[ -d $HOME/.docker/completions ]] && fpath=($HOME/.docker/completions $fpath)
-
 # zsh-completions from brew (macOS only)
 if [[ -n $IS_MACOS && -d $HOMEBREW_PREFIX/share/zsh-completions ]]; then
   FPATH=$HOMEBREW_PREFIX/share/zsh-completions:$FPATH
@@ -172,16 +169,6 @@ fi
 # Initialize fnm (Fast Node Manager)
 if command -v fnm &> /dev/null; then
     eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
-fi
-
-# Kubectl completion, generated once per kubectl binary instead of every shell
-if command -v kubectl &> /dev/null; then
-  _kubectl_comp="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh"
-  if [[ ! -s $_kubectl_comp || $commands[kubectl] -nt $_kubectl_comp ]]; then
-    mkdir -p "${_kubectl_comp:h}" && kubectl completion zsh >| "$_kubectl_comp"
-  fi
-  source "$_kubectl_comp"
-  unset _kubectl_comp
 fi
 
 # +-----------------+

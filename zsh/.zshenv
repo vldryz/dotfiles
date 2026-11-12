@@ -17,6 +17,3 @@ export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1 # don't auto-upgrade casks on `b
 
 # uv
 export PATH="$HOME/.local/bin:$PATH"
-
-# rust
-[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
