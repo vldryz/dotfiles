@@ -13,7 +13,11 @@ export LS_COLORS='di=01;34:ln=01;36:so=01;35:pi=40;33:ex=01;32:bd=40;33;01:cd=40
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 # homebrew
-export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1 # don't auto-upgrade casks on `brew install`/`upgrade`
+# `brew upgrade` leaves apps that update themselves (Zen, Helium, T3 Code,
+# Claude, ...) alone, so it never quits them mid-session; they update when I
+# choose. The exceptions below are upgraded by `brew upgrade` / `upall` anyway.
+export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1
+export HOMEBREW_UPGRADE_GREEDY_CASKS="google-chrome"
 
 # uv
 export PATH="$HOME/.local/bin:$PATH"
