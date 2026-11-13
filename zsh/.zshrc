@@ -35,8 +35,18 @@ autoload -U colors && colors
 # | INIT COMPLETION |
 # +-----------------+
 # Initialize completion system (after setting up zstyles)
-autoload -Uz compinit
-compinit
+autoload -Uz compinit compaudit
+# On a Mac shared between accounts, Homebrew belongs to one of them, and
+# compinit calls its completion dirs insecure for everyone else (it would ask
+# on every new shell). Trust those, as long as nothing else is flagged.
+_compinit_flags=()
+if [[ -n $HOMEBREW_PREFIX && ! -O $HOMEBREW_PREFIX ]]; then
+  _insecure=(${(M)${(f)"$(compaudit 2>/dev/null)"}:#/*})
+  (( ${#${_insecure:#$HOMEBREW_PREFIX/*}} )) || _compinit_flags=(-u)
+  unset _insecure
+fi
+compinit $_compinit_flags
+unset _compinit_flags
 
 # +-----------------+
 # | SHELL OPTIONS   |
@@ -170,6 +180,18 @@ fi
 if command -v fnm &> /dev/null; then
     eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
 fi
+
+# Initialize mise (Node etc., installed per account)
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# +-----------------+
+# | THIS MACHINE    |
+# +-----------------+
+# Settings for one Mac only can go in zsh/hosts/<hostname>.zsh; install.sh
+# links the one for this Mac here, if there is one.
+[[ -f $ZDOTDIR/host.zsh ]] && source $ZDOTDIR/host.zsh
 
 # +-----------------+
 # | PLUGINS         |

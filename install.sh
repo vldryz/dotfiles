@@ -9,7 +9,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./install.sh [--check] [--no-brew] [--adopt | --overwrite]
+Usage: ./install.sh [--check] [--no-brew] [--adopt | --overwrite] [--karabiner-default]
 
   --check      Show what would change; change nothing.
   --no-brew    Skip Homebrew and the Brewfile; only link configs.
@@ -17,12 +17,27 @@ Usage: ./install.sh [--check] [--no-brew] [--adopt | --overwrite]
                copy them into the repo (review with `git diff`), then link.
   --overwrite  For existing configs that differ from the repo: back them up
                to ~/.dotfiles-backup/ and link the repo's version.
+  --karabiner-default
+               For an account someone else uses: Karabiner starts on
+               "Default profile" (no remaps), with a menu bar icon to switch
+               to "Vlad". The config is copied instead of linked, so switching
+               profiles there never changes the repo.
 
 Without --adopt/--overwrite, differing configs are left alone and listed.
+
+On a Mac with several accounts, Homebrew belongs to the one that installed it.
+From any other account the Brewfile is only checked, and anything missing is
+listed for that account to install.
 EOF
 }
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+# Files named after this Mac (Brewfile.<host>, zsh/hosts/<host>.zsh) hold
+# what's specific to it.
+HOST_NAME=$(scutil --get LocalHostName 2>/dev/null || hostname -s)
+BREWFILE="$DOTFILES/Brewfile.$HOST_NAME"
+[[ -f $BREWFILE ]] || BREWFILE="$DOTFILES/Brewfile"
 
 # Repo path -> where it gets linked. Karabiner is linked as a whole directory:
 # when it saves, it replaces a symlinked karabiner.json with a plain file.
@@ -38,16 +53,22 @@ LINKS=(
   "karabiner               $HOME/.config/karabiner"
   "claude/skills/unslop    $HOME/.claude/skills/unslop"
 )
+# zsh settings for this Mac only, if the repo has any (sourced by .zshrc)
+if [[ -f $DOTFILES/zsh/hosts/$HOST_NAME.zsh ]]; then
+  LINKS+=("zsh/hosts/$HOST_NAME.zsh $HOME/.config/zsh/host.zsh")
+fi
 
 CHECK=0
 BREW=1
 ON_DIFF=skip
+KARABINER_DEFAULT=0
 for arg in "$@"; do
   case $arg in
     --check) CHECK=1 ;;
     --no-brew) BREW=0 ;;
     --adopt) ON_DIFF=adopt ;;
     --overwrite) ON_DIFF=overwrite ;;
+    --karabiner-default) KARABINER_DEFAULT=1 ;;
     -h | --help) usage; exit 0 ;;
     *) printf 'Unknown option: %s\n\n' "$arg" >&2; usage >&2; exit 2 ;;
   esac
@@ -154,20 +175,26 @@ if ((BREW)); then
 
   if [[ -n $brew_bin ]]; then
     eval "$("$brew_bin" shellenv)"
-    ok "Homebrew is installed"
+    brew_owner=$(stat -f %Su "$HOMEBREW_PREFIX")
+    ok "Homebrew is installed (owned by $brew_owner)"
 
-    brewfile="$DOTFILES/Brewfile"
+    brewfile=$BREWFILE
+    brewfile_name=${brewfile##*/}
     if brew bundle check --no-upgrade --file="$brewfile" >/dev/null 2>&1; then
-      ok "everything in the Brewfile is installed"
+      ok "everything in $brewfile_name is installed"
+    elif [[ ! -O $HOMEBREW_PREFIX ]]; then
+      problem "some of $brewfile_name is missing; run install.sh as $brew_owner to install it:"
+      { brew bundle check --no-upgrade --verbose --file="$brewfile" 2>&1 || true; } |
+        sed -n 's/^→ /      /p'
     elif ((CHECK)); then
-      act "install these from the Brewfile (missing only; nothing gets upgraded):"
+      act "install these from $brewfile_name (missing only; nothing gets upgraded):"
       # brew lists missing items on stderr and exits 1 when anything is missing
       { brew bundle check --no-upgrade --verbose --file="$brewfile" 2>&1 || true; } |
         sed -n 's/^→ /      /p'
     else
-      act "install what's missing from the Brewfile (nothing gets upgraded)"
+      act "install what's missing from $brewfile_name (nothing gets upgraded)"
       if ! brew bundle install --no-upgrade --file="$brewfile"; then
-        problem "some Brewfile items failed to install (see the output above)"
+        problem "some $brewfile_name items failed to install (see the output above)"
       fi
     fi
 
@@ -176,6 +203,16 @@ if ((BREW)); then
       autoload -Uz compaudit; compaudit 2>&1' _ "$HOMEBREW_PREFIX" | grep '^/' || true)
     if [[ -z $insecure ]]; then
       ok "zsh completion directories have safe permissions"
+    elif [[ ! -O $HOMEBREW_PREFIX ]]; then
+      # .zshrc trusts Homebrew's own dirs on other accounts, as long as they
+      # are not writable by others; only Homebrew's owner can fix those
+      writable=$(grep "^$HOMEBREW_PREFIX/" <<<"$insecure" | while IFS= read -r d; do
+        [[ -n $(find "$d" -maxdepth 0 -perm +022) ]] && echo "$d"; done || true)
+      if [[ -z $writable ]]; then
+        ok "zsh completion directories are fine (Homebrew's belong to $brew_owner)"
+      else
+        problem "zsh completion directories writable by others; run install.sh as $brew_owner to fix: $(tr '\n' ' ' <<<"$writable")"
+      fi
     else
       while IFS= read -r d; do
         act "remove group/other write permission from $d"
@@ -189,13 +226,81 @@ if ((BREW)); then
   fi
 fi
 
+# Karabiner config for an account someone else uses: the repo's profiles, with
+# "Default profile" selected and the menu bar icon on, copied into place.
+karabiner_default() {
+  local dst=$HOME/.config/karabiner shown tmp i name found=0
+  shown=$(pretty "$dst/karabiner.json")
+  tmp=$(mktemp)
+  cp "$DOTFILES/karabiner/karabiner.json" "$tmp"
+  for ((i = 0; ; i++)); do
+    name=$(plutil -extract "profiles.$i.name" raw -o - "$tmp" 2>/dev/null) || break
+    if [[ $name == "Default profile" ]]; then
+      plutil -replace "profiles.$i.selected" -bool true "$tmp"
+      found=1
+    else
+      plutil -replace "profiles.$i.selected" -bool false "$tmp"
+    fi
+  done
+  plutil -replace global.show_in_menu_bar -bool true "$tmp"
+  if ((!found)); then
+    problem "karabiner/karabiner.json has no \"Default profile\"; $shown not set up"
+    rm -f "$tmp"
+    return
+  fi
+
+  local replace=0
+  if [[ -L $dst ]]; then
+    act "replace the link $(pretty "$dst") with a folder holding a copy of the config"
+    replace=1
+  elif [[ -f $dst/karabiner.json ]]; then
+    if diff -q <(plutil -convert xml1 -o - "$dst/karabiner.json") \
+      <(plutil -convert xml1 -o - "$tmp") >/dev/null 2>&1; then
+      ok "$shown (repo profiles, \"Default profile\" selected)"
+      rm -f "$tmp"
+      return
+    fi
+    # Profiles switched from the menu bar land here too, so only replace when asked
+    if [[ $ON_DIFF != overwrite ]]; then
+      problem "$shown differs from the repo's profiles; left alone (re-run with --overwrite to reset it)"
+      rm -f "$tmp"
+      return
+    fi
+    act "back up $shown and copy in the repo's profiles"
+    replace=1
+  else
+    act "copy the repo's profiles to $shown (\"Default profile\" selected)"
+  fi
+
+  if ((!CHECK)); then
+    if ((replace)); then
+      if [[ -L $dst ]]; then backup "$dst"; else backup "$dst/karabiner.json"; fi
+    fi
+    mkdir -p "$dst"
+    cp "$tmp" "$dst/karabiner.json"
+  fi
+  rm -f "$tmp"
+}
+
 section "Config links"
 for entry in "${LINKS[@]}"; do
   # shellcheck disable=SC2086  # intentional word splitting: "repo-path target"
-  link_one $entry
+  set -- $entry
+  if ((KARABINER_DEFAULT)) && [[ $1 == karabiner ]]; then
+    karabiner_default
+  else
+    link_one "$@"
+  fi
 done
 
 section "Other"
+# With ZDOTDIR set in ~/.zshenv, zsh no longer reads these. Installers (mise,
+# rustup, uv, ...) often write setup lines into them, which would then be lost.
+for f in .zshrc .zprofile .zlogin; do
+  if [[ -f $HOME/$f && ! -L $HOME/$f ]]; then
+    problem "~/$f is ignored (zsh reads ~/.config/zsh/ instead); move anything you need from it into the repo, then delete it"
+  fi
+done
 if [[ -e $HOME/.hushlogin ]]; then
   ok "~/.hushlogin (no 'Last login' line in new terminals)"
 else
