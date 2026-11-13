@@ -183,9 +183,20 @@ if ((BREW)); then
     if brew bundle check --no-upgrade --file="$brewfile" >/dev/null 2>&1; then
       ok "everything in $brewfile_name is installed"
     elif [[ ! -O $HOMEBREW_PREFIX ]]; then
-      problem "some of $brewfile_name is missing; run install.sh as $brew_owner to install it:"
-      { brew bundle check --no-upgrade --verbose --file="$brewfile" 2>&1 || true; } |
-        sed -n 's/^→ /      /p'
+      # `brew bundle check` is unreliable from an account that doesn't own
+      # Homebrew, so look in the Homebrew folder directly
+      missing=$(sed -nE 's/^(brew|cask) "([^"]+)".*/\1 \2/p' "$brewfile" |
+        while read -r kind name; do
+          name=${name##*/}
+          if [[ $kind == brew ]]; then dir=$HOMEBREW_PREFIX/opt/$name; else dir=$HOMEBREW_PREFIX/Caskroom/$name; fi
+          [[ -e $dir ]] || echo "$kind $name"
+        done)
+      if [[ -z $missing ]]; then
+        ok "everything in $brewfile_name is installed"
+      else
+        problem "some of $brewfile_name is missing; run install.sh as $brew_owner to install it:"
+        sed 's/^/      /' <<<"$missing"
+      fi
     elif ((CHECK)); then
       act "install these from $brewfile_name (missing only; nothing gets upgraded):"
       # brew lists missing items on stderr and exits 1 when anything is missing
