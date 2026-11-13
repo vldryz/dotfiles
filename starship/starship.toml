@@ -28,6 +28,8 @@ style_root = "fg:red"
 format = "[$user]($style) "
 disabled = false
 show_always = false
+# Also shown when this is set (zsh/hosts/: on Macs with several accounts)
+detect_env_vars = ["STARSHIP_SHOW_USER"]
 
 [hostname]
 ssh_only = true
