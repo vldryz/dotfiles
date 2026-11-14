@@ -113,8 +113,11 @@ zstyle ':completion:*:*:-command-:*:*' group-order aliases builtins functions co
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' keep-prefix true
 
-# SSH/SCP/SFTP completion
-zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+# SSH/SCP/SFTP completion: Host aliases from ~/.ssh/config first. If none
+# starts with what was typed, zsh's usual list (known_hosts names) instead.
+zstyle -e ':completion:*:(ssh|scp|sftp|rsync|ssh-copy-id):*' hosts '
+  [[ -r ~/.ssh/config ]] && reply=(${${=${${(M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }}:#*[*?!]*})
+  (( ${reply[(I)(#i)$PREFIX*]} )) || unset reply'
 
 # +-----------------+
 # | KEY BINDINGS    |
