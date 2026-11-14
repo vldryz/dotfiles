@@ -2,8 +2,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-$username\
-$hostname\
+($username$hostname )\
 $directory\
 $git_branch\
 $git_status\
@@ -25,16 +24,18 @@ palette = "vesper"
 [username]
 style_user = "fg:blue"
 style_root = "fg:red"
-format = "[$user]($style) "
+format = "[$user]($style)"
 disabled = false
 show_always = false
 # Also shown when this is set (zsh/hosts/: on Macs with several accounts)
-detect_env_vars = ["STARSHIP_SHOW_USER"]
+detect_env_vars = ["STARSHIP_USER_HOST"]
 
 [hostname]
-ssh_only = true
+# user@host over ssh, and when zsh/hosts/ asks for it (still there after su -)
+ssh_only = false
+detect_env_vars = ["SSH_CONNECTION", "STARSHIP_USER_HOST"]
 style = "fg:blue"
-format = "on [$hostname]($style) "
+format = "[@$hostname]($style)"
 
 [directory]
 style = "fg:magenta"
