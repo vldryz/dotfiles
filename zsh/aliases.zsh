@@ -2,9 +2,6 @@
 # | GENERAL         |
 # +-----------------+
 
-# GNU ls (Linux) needs --color=auto; BSD ls (macOS) uses CLICOLOR from .zshenv
-[[ -n $IS_DEBIAN ]] && alias ls='ls --color=auto'
-
 alias ll="ls -lahF"
 alias la="ls -A"
 (( $+commands[zoxide] )) && alias cd="z"  # without zoxide, keep the builtin cd

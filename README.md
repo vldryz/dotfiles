@@ -31,11 +31,6 @@ repo's (yours is moved to `~/.dotfiles-backup/`).
 After adding an SSH key to GitHub, switch the remote so you can push:
 `git -C ~/dotfiles remote set-url origin git@github.com:vldryz/dotfiles.git`
 
-## Linux servers
-
-Clone to `~/dotfiles`, then run `scripts/install-remote.sh` (Debian/Ubuntu,
-uses apt).
-
 ## Keeping it current
 
 - `upall` upgrades Homebrew packages and uv tools without stopping to ask,

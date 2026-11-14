@@ -1,18 +1,12 @@
 # +-----------------+
-# | PLATFORM DETECT |
+# | HOMEBREW        |
 # +-----------------+
-if [[ "$OSTYPE" == darwin* ]]; then
-  IS_MACOS=true
-  # Homebrew (early because it affects PATH and plugin paths).
-  # Login shells already got this from .zprofile; only non-login shells need it.
-  if [[ -z $HOMEBREW_PREFIX && -x /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
-  ZSH_PLUGIN_DIR="$HOMEBREW_PREFIX/share"
-elif [[ -f /etc/debian_version ]]; then
-  IS_DEBIAN=true
-  ZSH_PLUGIN_DIR="/usr/share"
+# Early because it affects PATH and plugin paths.
+# Login shells already got this from .zprofile; only non-login shells need it.
+if [[ -z $HOMEBREW_PREFIX && -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
+ZSH_PLUGIN_DIR="$HOMEBREW_PREFIX/share"
 
 # +-----------------+
 # | PATH & FPATH    |
@@ -20,8 +14,8 @@ fi
 # Keep PATH/FPATH free of duplicates (path_helper + brew shellenv overlap)
 typeset -U path fpath
 
-# zsh-completions from brew (macOS only)
-if [[ -n $IS_MACOS && -d $HOMEBREW_PREFIX/share/zsh-completions ]]; then
+# zsh-completions from brew
+if [[ -d $HOMEBREW_PREFIX/share/zsh-completions ]]; then
   FPATH=$HOMEBREW_PREFIX/share/zsh-completions:$FPATH
 fi
 
@@ -126,12 +120,9 @@ zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f
 # | KEY BINDINGS    |
 # +-----------------+
 # Safe alias expansion on space
-# bracketed-paste-magic handles paste correctly on macOS (newer zsh),
-# but is painfully slow on zsh 5.8.x (Ubuntu 22.04) — skip it there
-if [[ -n $IS_MACOS ]]; then
-  autoload -Uz bracketed-paste-magic
-  zle -N bracketed-paste bracketed-paste-magic
-fi
+# bracketed-paste-magic handles paste correctly
+autoload -Uz bracketed-paste-magic
+zle -N bracketed-paste bracketed-paste-magic
 
 function expand-alias() {
 	zle _expand_alias

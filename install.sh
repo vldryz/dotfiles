@@ -147,7 +147,7 @@ link_one() {
 # --------------------------------------------------------------------------
 
 if [[ $(uname -s) != Darwin ]]; then
-  echo "install.sh is for macOS. On Debian/Ubuntu servers use scripts/install-remote.sh." >&2
+  echo "install.sh is for macOS." >&2
   exit 1
 fi
 
