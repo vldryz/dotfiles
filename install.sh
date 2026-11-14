@@ -318,6 +318,23 @@ else
   act "create ~/.hushlogin (no 'Last login' line in new terminals)"
   ((CHECK)) || touch "$HOME/.hushlogin"
 fi
+# Ghostty's terminal type, xterm-ghostty, for this account. Ghostty points its
+# own windows at the copy inside the app, and its ssh-terminfo copies it to the
+# account you ssh into, but `su - <account>` keeps TERM=xterm-ghostty without
+# the definition, and zsh can't redraw the command line (keystrokes pile up).
+ghostty_terminfo=/Applications/Ghostty.app/Contents/Resources/terminfo
+if [[ -d $ghostty_terminfo ]]; then
+  if env -u TERMINFO -u TERMINFO_DIRS infocmp xterm-ghostty >/dev/null 2>&1; then
+    ok "xterm-ghostty terminal type (for su - and ssh into this account)"
+  else
+    act "add the xterm-ghostty terminal type to ~/.terminfo (for su - and ssh into this account)"
+    # -o: never write into the app, which Ghostty's TERMINFO points at
+    if ((!CHECK)) && ! { infocmp -x -A "$ghostty_terminfo" xterm-ghostty |
+      tic -x -o "$HOME/.terminfo" -; } 2>/dev/null; then
+      problem "couldn't add xterm-ghostty to ~/.terminfo"
+    fi
+  fi
+fi
 
 section "Summary"
 ((BACKED_UP)) && echo "  Replaced files were moved to $(pretty "$BACKUP_DIR")"
