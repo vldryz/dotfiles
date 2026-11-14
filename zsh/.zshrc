@@ -177,6 +177,15 @@ if command -v mise &> /dev/null; then
   eval "$(mise activate zsh)"
 fi
 
+# Start this account's ssh-agent if it isn't running (see .zshenv)
+if [[ -d $HOME/.ssh && ( -z $SSH_AUTH_SOCK || $SSH_AUTH_SOCK == $HOME/.ssh/agent.sock ) ]]; then
+  ssh-add -l &>/dev/null
+  if (( $? == 2 )); then  # 2: no agent behind the socket
+    rm -f $HOME/.ssh/agent.sock
+    eval "$(ssh-agent -a $HOME/.ssh/agent.sock)" >/dev/null
+  fi
+fi
+
 # +-----------------+
 # | THIS MACHINE    |
 # +-----------------+

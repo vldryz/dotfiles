@@ -27,3 +27,11 @@ export HOMEBREW_UPGRADE_GREEDY_CASKS="google-chrome"
 [[ -d $HOME/.local/share/mise/shims ]] && export PATH="$HOME/.local/share/mise/shims:$PATH"
 # uv, uv tools, Claude Code
 export PATH="$HOME/.local/bin:$PATH"
+
+# ssh-agent for shells that have none (ssh logins, su -): each account keeps
+# its own in ~/.ssh, so a key's passphrase is asked once per boot (with
+# AddKeysToAgent yes in ~/.ssh/config). .zshrc starts it. Here so agents and
+# scripts find it too. The Mac's own agent (terminals on the Mac) is left alone.
+if [[ -z $SSH_AUTH_SOCK && -S $HOME/.ssh/agent.sock ]]; then
+  export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+fi
