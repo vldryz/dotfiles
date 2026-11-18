@@ -12,6 +12,13 @@ export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
 export LS_COLORS='di=01;34:ln=01;36:so=01;35:pi=40;33:ex=01;32:bd=40;33;01:cd=40;33;01:fi=00;37'
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
+# locale
+# UTF-8 when nothing set a locale. Terminal apps set LANG, and macOS sets it
+# for login shells only (/etc/zprofile). Shells a background service starts
+# (T3 Code's terminal on backbook) get none, and zsh garbles non-ASCII input.
+# LANG ranks below LC_*, so this never overrides a locale that was asked for.
+export LANG=${LANG:-en_US.UTF-8}
+
 # homebrew
 # `brew upgrade` leaves apps that update themselves (Zen, Helium, T3 Code,
 # Claude, ...) alone, so it never quits them mid-session; they update when I
